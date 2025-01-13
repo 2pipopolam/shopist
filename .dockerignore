@@ -1,0 +1,7 @@
+target/
+!target/release/shopist
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+README.md

@@ -12,7 +12,6 @@ pub struct Model {
     pub shop_id: i32,
 }
 
-// DTO для создания нового предмета
 #[derive(Debug, Deserialize)]
 pub struct CreateItem {
     pub name: String,

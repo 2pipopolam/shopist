@@ -12,7 +12,7 @@ services:
       - DATABASE_URL=postgresql://user:password@db:5432/shopist_db
       - RUST_LOG=debug
     volumes:
-      - .:/usr/src/app
+      - .:/usr/src/app:cached
       - cargo-cache:/usr/local/cargo/registry
       - target-cache:/usr/src/app/target
     command: cargo watch -x run

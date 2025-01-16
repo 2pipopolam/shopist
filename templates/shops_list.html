@@ -1,0 +1,8 @@
+{% for shop in shops %}
+<div class="border rounded p-4 hover:bg-gray-50">
+    <a href="/shops/{{shop.id}}/items" class="flex justify-between items-center">
+        <span class="text-lg">{{shop.name}}</span>
+        <span class="text-gray-500">→</span>
+    </a>
+</div>
+{% endfor %}

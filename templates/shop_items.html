@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold">{{shop.name}}</h2>
+        <form class="flex gap-2" hx-post="/shops/{{shop.id}}/items" hx-target="#items-list">
+            <input type="text" 
+                   name="name" 
+                   placeholder="Название товара" 
+                   class="px-3 py-2 border rounded"
+                   required>
+            <input type="number" 
+                   name="quantity" 
+                   placeholder="Количество" 
+                   class="px-3 py-2 border rounded w-24"
+                   required>
+            <button type="submit" 
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Добавить
+            </button>
+        </form>
+    </div>
+
+    <div id="items-list" class="space-y-4">
+        {% for item in items %}
+        <div class="border rounded p-4 {% if item.is_picked %}bg-green-50{% endif %}">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <input type="checkbox" 
+                           {% if item.is_picked %}checked{% endif %}
+                           hx-put="/shops/{{shop.id}}/items/{{item.id}}/toggle"
+                           hx-target="closest div">
+                    <span class="text-lg">{{item.name}}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="number" 
+                           value="{{item.quantity}}"
+                           class="w-20 px-2 py-1 border rounded"
+                           hx-put="/shops/{{shop.id}}/items/{{item.id}}/quantity"
+                           hx-trigger="change">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

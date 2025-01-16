@@ -1,0 +1,21 @@
+{% for item in items %}
+<div class="border rounded p-4 {% if item.is_picked %}bg-green-50{% endif %}">
+    <div class="flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <input type="checkbox" 
+                   {% if item.is_picked %}checked{% endif %}
+                   hx-put="/shops/{{shop.id}}/items/{{item.id}}/toggle"
+                   hx-target="closest div">
+            <span class="text-lg">{{item.name}}</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="number" 
+                   value="{{item.quantity}}"
+                   class="w-20 px-2 py-1 border rounded"
+                   hx-put="/shops/{{shop.id}}/items/{{item.id}}/quantity"
+                   hx-trigger="change"
+                   name="value">
+        </div>
+    </div>
+</div>
+{% endfor %}

@@ -9,7 +9,7 @@ pub struct Model {
     pub name: String,
 }
 
-// DTO для создания нового магазина
+// DTO 
 #[derive(Debug, Deserialize)]
 pub struct CreateShop {
     pub name: String,

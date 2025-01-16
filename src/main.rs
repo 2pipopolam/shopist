@@ -13,7 +13,7 @@ mod routes;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Настройка логирования
+    // Logging
     tracing_subscriber::registry()
         .with(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -24,12 +24,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with(tracing_subscriber::fmt::layer().with_target(true))
         .init();
 
-    // Загрузка переменных окружения
+    // load env data
     dotenvy::dotenv().ok();
 
-    // Настройка подключения к базе данных
+    // connect to db
     let db_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| {
-        "postgres://postgres:postgres@db:5432/shopist_db".to_string()
+        "postgresql://user:password@db:5432/shopist_db".to_string()
     });
 
     let host = std::env::var("HOST").unwrap_or_else(|_| "0.0.0.0".to_string());
@@ -38,27 +38,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .parse::<u16>()
         .expect("PORT должен быть числом");
 
-    // Подключение к базе данных
+    
     tracing::info!("Подключение к базе данных...");
     let db = Database::connect(&db_url)
         .await
         .expect("Не удалось подключиться к базе данных");
 
-    // Применение миграций
+    // migrations
     tracing::info!("Применение миграций...");
     Migrator::up(&db, None)
         .await
         .expect("Не удалось применить миграции");
 
-    // Создание маршрутизатора с middleware
+    // router with middleware
     let app = routes::create_router(db)
         .layer(TraceLayer::new_for_http());
 
-    // Настройка адреса сервера
+    // set server addr
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
     tracing::info!("Запуск сервера по адресу: http://{}:{}", host, port);
 
-    // Создание и запуск сервера
+    // run server
     let listener = TcpListener::bind(addr)
         .await
         .expect("Не удалось запустить сервер");

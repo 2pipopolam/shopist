@@ -4,22 +4,30 @@
 <div class="bg-white rounded-lg shadow p-6">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold">{{shop.name}}</h2>
-        <form class="flex gap-2" hx-post="/shops/{{shop.id}}/items" hx-target="#items-list">
-            <input type="text" 
-                   name="name" 
-                   placeholder="Название товара" 
-                   class="px-3 py-2 border rounded"
-                   required>
-            <input type="number" 
-                   name="quantity" 
-                   placeholder="Количество" 
-                   class="px-3 py-2 border rounded w-24"
-                   required>
-            <button type="submit" 
-                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Добавить
+        <div class="flex gap-4">
+            <button class="text-red-500 hover:text-red-700 px-4 py-2 border border-red-500 rounded"
+                    hx-delete="/shops/{{shop.id}}/items"
+                    hx-target="#items-list"
+                    hx-confirm="Вы действительно хотите очистить список?">
+                Очистить список
             </button>
-        </form>
+            <form class="flex gap-2" hx-post="/shops/{{shop.id}}/items" hx-target="#items-list">
+                <input type="text" 
+                       name="name" 
+                       placeholder="Название товара" 
+                       class="px-3 py-2 border rounded"
+                       required>
+                <input type="number" 
+                       name="quantity" 
+                       placeholder="Количество" 
+                       class="px-3 py-2 border rounded w-24"
+                       required>
+                <button type="submit" 
+                        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Добавить
+                </button>
+            </form>
+        </div>
     </div>
 
     <div id="items-list" class="space-y-4">
@@ -38,11 +46,18 @@
                            value="{{item.quantity}}"
                            class="w-20 px-2 py-1 border rounded"
                            hx-put="/shops/{{shop.id}}/items/{{item.id}}/quantity"
-                           hx-trigger="change">
+                           hx-trigger="change"
+                           name="value">
+                    <button class="text-red-500 hover:text-red-700"
+                            hx-delete="/shops/{{shop.id}}/items/{{item.id}}"
+                            hx-target="#items-list"
+                            hx-confirm="Удалить этот товар?">
+                        ✕
+                    </button>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

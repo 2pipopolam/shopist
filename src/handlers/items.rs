@@ -86,6 +86,8 @@ pub async fn create_item(
     Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
 }
 
+
+
 pub async fn toggle_item(
     State(ref db): State<DatabaseConnection>,
     Path((shop_id, item_id)): Path<(i32, i32)>,
@@ -115,6 +117,7 @@ pub async fn toggle_item(
     Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
 }
 
+
 pub async fn update_quantity(
     State(ref db): State<DatabaseConnection>,
     Path((shop_id, item_id)): Path<(i32, i32)>,
@@ -142,5 +145,49 @@ pub async fn update_quantity(
         .await?;
 
     let template = ItemsListTemplate { shop, items };
+    Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
+}
+
+
+
+pub async fn delete_item(
+    State(ref db): State<DatabaseConnection>,
+    Path((shop_id, item_id)): Path<(i32, i32)>,
+) -> Result<Html<String>, AppError> {
+    let shop = shop::Entity::find_by_id(shop_id)
+        .one(db)
+        .await?
+        .ok_or(AppError::NotFound)?;
+
+    item::Entity::delete_by_id(item_id)
+        .filter(item::Column::ShopId.eq(shop_id))
+        .exec(db)
+        .await?;
+
+    let items = item::Entity::find()
+        .filter(item::Column::ShopId.eq(shop_id))
+        .order_by_asc(item::Column::Name)
+        .all(db)
+        .await?;
+
+    let template = ItemsListTemplate { shop, items };
+    Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
+}
+
+pub async fn delete_all_items(
+    State(ref db): State<DatabaseConnection>,
+    Path(shop_id): Path<i32>,
+) -> Result<Html<String>, AppError> {
+    let shop = shop::Entity::find_by_id(shop_id)
+        .one(db)
+        .await?
+        .ok_or(AppError::NotFound)?;
+
+    item::Entity::delete_many()
+        .filter(item::Column::ShopId.eq(shop_id))
+        .exec(db)
+        .await?;
+
+    let template = ItemsListTemplate { shop, items: vec![] };
     Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
 }

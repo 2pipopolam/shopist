@@ -6,6 +6,7 @@ use tower_http::trace::TraceLayer;
 use migration::{Migrator, MigratorTrait};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+
 mod error;
 mod handlers;
 mod models;

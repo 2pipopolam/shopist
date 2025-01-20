@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Path, State, Form},
+    extract::{State, Form},
     response::Html,
 };
 use sea_orm::{
@@ -54,18 +54,5 @@ pub async fn create_shop(
         .await?;
     
     let template = ShopsListTemplate { shops };
-    Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
-}
-
-pub async fn get_shop(
-    State(ref db): State<DatabaseConnection>,
-    Path(id): Path<i32>,
-) -> Result<Html<String>, AppError> {
-    let shop = shop::Entity::find_by_id(id)
-        .one(db)
-        .await?
-        .ok_or(AppError::NotFound)?;
-        
-    let template = ShopsTemplate { shops: vec![shop] };
     Ok(Html(template.render().map_err(|e| AppError::BadRequest(e.to_string()))?))
 }
